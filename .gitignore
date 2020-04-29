@@ -2,7 +2,6 @@
 !/Assets/
 /Assets/*
 !/Assets/*.cs
-/Assets/*/*
 !/Assets/*/*.cs
 !.gitignore
 !/docs/
