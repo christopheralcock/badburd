@@ -1,6 +1,4 @@
 /*
-!/Assets/
-/Assets/*
 !/Assets/*.cs
 !/Assets/*/*.cs
 !.gitignore
