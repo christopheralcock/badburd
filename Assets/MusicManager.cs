@@ -6,9 +6,11 @@ using UnityEngine.SceneManagement;
 public class MusicManager : MonoBehaviour
 {
     public static Dictionary<string, AudioSource[]> musicDictionary = new Dictionary<string, AudioSource[]>();
+    public static GameObject[] allMusicObjects;
 
     void Start()
     {
+        allMusicObjects = GameObject.FindGameObjectsWithTag("Music");
 
         AudioSource level1Music = GameObject.Find("Level1Music").GetComponent<AudioSource>();
         DontDestroyOnLoad(level1Music);
