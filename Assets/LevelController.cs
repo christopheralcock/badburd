@@ -11,13 +11,15 @@ public class LevelController : MonoBehaviour
     Bird bird;
     string sceneName;
     static int levelNumber;
-    static public AudioSource currentMusicToRaise; 
+    static public AudioSource currentMusicToRaise;
+    GameObject[] allMusicObjects;
 
-    void OnEnable() {
+    void Start() {
         _enemies = FindObjectsOfType<Enemy>().ToList();
         bird = FindObjectOfType<Bird>();
         sceneName = SceneManager.GetActiveScene().name;
         levelNumber = Int32.Parse(sceneName.Replace("Level", ""));
+        allMusicObjects = GameObject.FindGameObjectsWithTag("Music");
     }
 
     // Update is called once per frame
@@ -33,21 +35,26 @@ public class LevelController : MonoBehaviour
             levelNumber++;
             var nextLevelName = "Level" + levelNumber;
             SceneManager.LoadScene(nextLevelName);
-            foreach (GameObject obj in MusicManager.musics)
-            {
-                if (obj.name == nextLevelName+"Music") {
-                    currentMusicToRaise = obj.GetComponent<AudioSource>();
-                    //obj.GetComponent<AudioSource>().volume = 1;
-                        }
-            }
+
         }
-        if (currentMusicToRaise)
+
+        foreach (AudioSource music in MusicManager.musicDictionary[sceneName])
         {
-            if (currentMusicToRaise.volume < 1)
+            if (music.volume < 1)
             {
-                currentMusicToRaise.volume = currentMusicToRaise.volume + 0.01f;
+                music.volume = music.volume + 0.01f;
             }
         }
+
+        foreach (GameObject musicObject in allMusicObjects)
+        {
+            var music = musicObject.GetComponent<AudioSource>();
+            if (music.volume > 0 && !MusicManager.musicDictionary[sceneName].Contains<AudioSource>(music) )
+            {
+                music.volume = music.volume - 0.01f;
+            }
+        }
+
 
         if (bird.idle)
         {
