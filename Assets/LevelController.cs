@@ -10,25 +10,39 @@ public class LevelController : MonoBehaviour
     List<Enemy> enemies;
     Bird bird;
     string sceneName;
-    static int levelNumber;
+    static int levelIndex;
     static public AudioSource currentMusicToRaise;
+    static public string[] levelList = {"MusicLoader", "Level1", "Level2", "Level3", "Level4", "EndScreen" };
 
     void Start() {
-        enemies = FindObjectsOfType<Enemy>().ToList();
-        bird = FindObjectOfType<Bird>();
         sceneName = SceneManager.GetActiveScene().name;
-        levelNumber = Int32.Parse(sceneName.Replace("Level", ""));
+        levelIndex = Array.IndexOf(levelList, sceneName);
+
+        if (sceneName != "EndScreen")
+        {
+            enemies = FindObjectsOfType<Enemy>().ToList();
+            bird = FindObjectOfType<Bird>();
+        }
     }
 
     void Update()
     {
-        if (!enemies.Any((arg) => arg)) {
-            Debug.Log("You killed all the enemies");
-            levelNumber++;
-            var nextLevelName = "Level" + levelNumber;
-            SceneManager.LoadScene(nextLevelName);
+        if (sceneName != "EndScreen")
+        {
+            // Restart if bird is marked idle
+            if (bird && bird.idle)
+            {
+                SceneManager.LoadScene(sceneName);
+            }
+            // If all enemies nullified, Load next level
+            if (!enemies.Any((arg) => arg))
+            {
+                Debug.Log("You killed all the enemies");
+                levelIndex++;
+                SceneManager.LoadScene(levelList[levelIndex]);
+            }
         }
-
+        // Turn up the right soundtrack elements
         foreach (AudioSource music in MusicManager.musicDictionary[sceneName])
         {
             if (music.volume < 1)
@@ -37,6 +51,7 @@ public class LevelController : MonoBehaviour
             }
         }
 
+        // Turn down the wrong soundtrack elements
         foreach (GameObject musicObject in MusicManager.allMusicObjects)
         {
             var music = musicObject.GetComponent<AudioSource>();
@@ -45,10 +60,5 @@ public class LevelController : MonoBehaviour
                 music.volume = music.volume - 0.01f;
             }
         }
-
-        if (bird.idle)
-        {
-            SceneManager.LoadScene(sceneName);
         }
-}
 }

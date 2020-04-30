@@ -2,38 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class MusicManager : MonoBehaviour
 {
-    public static Dictionary<string, AudioSource[]> musicDictionary = new Dictionary<string, AudioSource[]>();
+    public static Dictionary<string, List<AudioSource>> musicDictionary = new Dictionary<string, List<AudioSource>>();
     public static GameObject[] allMusicObjects;
+    Dictionary<string, List<string>> musicStringDictionary = new Dictionary<string, List<string>>(){
+            {"Level1", new List<string>(){ "Level1Music" } },
+            {"Level2", new List<string>(){ "Level1Music", "Level2Music" } },
+            {"Level3", new List<string>(){ "Level1Music", "Level2Music", "Level3Music" } },
+            {"Level4", new List<string>(){ "Level1Music", "Level2Music", "Level3Music", "Level4Music" } },
+            {"EndScreen", new List<string>(){ "Level2Music", "Level3Music", "Level4Music" } }
+            };
 
-    void Start()
+    private void Start()
     {
         allMusicObjects = GameObject.FindGameObjectsWithTag("Music");
-
-        AudioSource level1Music = GameObject.Find("Level1Music").GetComponent<AudioSource>();
-        DontDestroyOnLoad(level1Music);
-        AudioSource level2Music = GameObject.Find("Level2Music").GetComponent<AudioSource>();
-        DontDestroyOnLoad(level2Music);
-        AudioSource level3Music = GameObject.Find("Level3Music").GetComponent<AudioSource>();
-        DontDestroyOnLoad(level3Music);
-        AudioSource level4Music = GameObject.Find("Level4Music").GetComponent<AudioSource>();
-        DontDestroyOnLoad(level4Music);
-
-
-        AudioSource[] level1Musics = { level1Music };
-        musicDictionary.Add("MusicLoader", level1Musics);
-        musicDictionary.Add("Level1", level1Musics);
-        AudioSource[] level2Musics = { level1Music, level2Music };
-        musicDictionary.Add("Level2", level2Musics);
-        AudioSource[] level3Musics = { level1Music, level2Music, level3Music };
-        musicDictionary.Add("Level3", level3Musics);
-        AudioSource[] level4Musics = { level1Music, level2Music, level3Music, level4Music };
-        musicDictionary.Add("Level4", level4Musics);
-        AudioSource[] level5Musics = { level1Music, level2Music, level3Music, level4Music };
-        musicDictionary.Add("Level5", level5Musics);
-
+        CreateMusicDictionary();
         SceneManager.LoadScene("Level1");
+    }
+
+    private void CreateMusicDictionary()
+    {
+        foreach (var levelMusicConfig in musicStringDictionary)
+        {
+            var audioSourceList = new List<AudioSource>();
+
+            foreach (var obj in levelMusicConfig.Value)
+            {
+                var audioSource = GameObject.Find(obj).GetComponent<AudioSource>();
+                audioSourceList.Add(audioSource);
+                DontDestroyOnLoad(audioSource);
+            }
+            musicDictionary.Add(levelMusicConfig.Key, audioSourceList);
+        }
     }
 }
