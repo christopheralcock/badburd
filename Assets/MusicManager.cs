@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.IO;
 
 public class MusicManager : MonoBehaviour
 {
+    [SerializeField] public bool autoRestart = true;
+
     public static Dictionary<string, List<AudioSource>> musicDictionary = new Dictionary<string, List<AudioSource>>();
     public static GameObject[] allMusicObjects;
     Dictionary<string, List<string>> musicStringDictionary = new Dictionary<string, List<string>>(){
@@ -20,6 +20,8 @@ public class MusicManager : MonoBehaviour
     {
         allMusicObjects = GameObject.FindGameObjectsWithTag("Music");
         CreateMusicDictionary();
+        SetUIToNotDestroy();
+        DontDestroyOnLoad(this);
         SceneManager.LoadScene("Level1");
     }
 
@@ -36,6 +38,16 @@ public class MusicManager : MonoBehaviour
                 DontDestroyOnLoad(audioSource);
             }
             musicDictionary.Add(levelMusicConfig.Key, audioSourceList);
+        }
+    }
+
+    private void SetUIToNotDestroy()
+    {
+        var uiStuff = GameObject.FindGameObjectsWithTag("UI");
+        foreach (var ui in uiStuff)
+        {
+            Debug.Log("found a UI thing to mark safe:" + ui.ToString() + ui.name);
+            DontDestroyOnLoad(ui);
         }
     }
 }

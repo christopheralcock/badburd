@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Music
   - TargetGroup
+  - UI
   layers:
   - Default
   - TransparentFX

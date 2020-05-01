@@ -29,8 +29,9 @@ public class LevelController : MonoBehaviour
     {
         if (sceneName != "EndScreen")
         {
+            var autoRestart = FindObjectOfType<MusicManager>().autoRestart;
             // Restart if bird is marked idle
-            if (bird && bird.idle)
+            if (bird && bird.idle && autoRestart)
             {
                 SceneManager.LoadScene(sceneName);
             }

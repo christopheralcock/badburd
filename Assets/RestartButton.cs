@@ -10,5 +10,6 @@ public class RestartButton : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene("Level1");
+        Debug.Log("clicked restart button");
     }
 }
